@@ -6,15 +6,75 @@
 			"include": "#keywords"
 		},
 		{
+			"include": "#comments"
+		},
+		{
+			"include": "#opers"
+		},
+		{
+			"include": "#ents"
+		},
+		{
+			"include": "#constants"
+		},
+		{
 			"include": "#strings"
 		}
 	],
 	"repository": {
 		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.paka",
+					"match": "\\b(if|else|while|return|until|unless)\\b"
+				},
+				{
+					"name": "keyword.other.paka",
+					"match": "\\b(def|lambda|macro)\\b"
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"name": "constant.language.paka",
+					"match": "\\b(true|false|box|unbox|map)\\b"
+				},
+				{
+					"name": "constant.numeric.paka",
+					"match": "\b([0-9]+)\b"
+				}
+			]
+		},
+		"comments": {
 			"patterns": [{
-				"name": "keyword.control.paka",
-				"match": "\\b(if|else|def|lambda|true|false|while|return|until|unless|macro|box|unbox|map)\\b"
+				"name": "comment.line.paka",
+				"match": "##.*\n"
 			}]
+		},
+		"opers": {
+			"patterns": [
+				{
+					"name": "keyword.operator.paka",
+					"match": "\b([\\+\\-\\*\\/\\%\\<\\>\\=\\!\\#]+|or|and)\b"
+				}
+			]
+		},
+		"ents": {
+			"patterns": [
+				{
+					"name": "entity.name.function.paka",
+					"match": "\\b([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b(?=\\()"
+				},
+				{
+					"name": "entity.name.paka",
+					"match": "\\b([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b(?!\\()"
+				},
+				{
+					"name": "entity.name.function.paka",
+					"match": "\\btype\\.([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b"
+				}
+			]
 		},
 		"strings": {
 			"name": "string.quoted.double.paka",
