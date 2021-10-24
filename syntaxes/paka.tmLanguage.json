@@ -1,0 +1,32 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "paka",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.paka",
+				"match": "\\b(if|else|def|lambda|true|false|while|return|until|unless|macro|box|unbox|map)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.paka",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.paka",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.paka"
+}

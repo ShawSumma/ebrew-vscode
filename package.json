@@ -1,0 +1,25 @@
+{
+    "name": "paka-vscode",
+    "displayName": "paka-vscode",
+    "description": "Paka VSCode Support",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.61.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "paka",
+            "aliases": ["paka", "paka"],
+            "extensions": [".paka"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "paka",
+            "scopeName": "source.paka",
+            "path": "./syntaxes/paka.tmLanguage.json"
+        }]
+    }
+}
