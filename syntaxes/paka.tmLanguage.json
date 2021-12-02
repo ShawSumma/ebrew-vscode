@@ -26,11 +26,11 @@
 			"patterns": [
 				{
 					"name": "keyword.control.paka",
-					"match": "\\b(if|else|while|return|until|unless)\\b"
+					"match": "\\b(if|else|while|return|until|unless|resolve|reject|throw|exit|foreach|loop)\\b"
 				},
 				{
 					"name": "keyword.other.paka",
-					"match": "\\b(def|lambda|macro)\\b"
+					"match": "\\b(def|lambda|macro|handle|map|box|unbox)\\b"
 				}
 			]
 		},
@@ -38,7 +38,7 @@
 			"patterns": [
 				{
 					"name": "constant.language.paka",
-					"match": "\\b(true|false|box|unbox|map)\\b"
+					"match": "\\b(none|true|false)\\b"
 				},
 				{
 					"name": "constant.numeric.paka",
@@ -64,15 +64,15 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.paka",
-					"match": "\\b([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b(?=\\()"
+					"match": "\\b([a-zA-Z$@._][a-zA-Z0-9$@._]*)\\b(?=\\()"
 				},
 				{
 					"name": "entity.name.paka",
-					"match": "\\b([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b(?!\\()"
+					"match": "\\b([a-zA-Z$@._][a-zA-Z0-9$@._]*)\\b(?!\\()"
 				},
 				{
 					"name": "entity.name.function.paka",
-					"match": "\\btype\\.([a-zA-Z$@.][a-zA-Z0-9$@.]*)\\b"
+					"match": "\\btype\\.([a-zA-Z$@._][a-zA-Z0-9$@._]*)\\b"
 				}
 			]
 		},

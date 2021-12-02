@@ -1,10 +1,11 @@
 {
     "name": "paka-vscode",
+    "publisher": "4984",
     "displayName": "paka-vscode",
     "description": "Paka VSCode Support",
-    "version": "0.0.1",
+    "version": "0.0.4",
     "engines": {
-        "vscode": "^1.61.0"
+        "vscode": "^1.40.0"
     },
     "categories": [
         "Programming Languages"
