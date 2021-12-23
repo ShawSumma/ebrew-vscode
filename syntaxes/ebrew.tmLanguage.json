@@ -1,0 +1,103 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "ebrew",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#chars"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#opers"
+		},
+		{
+			"include": "#ents"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.ebrew",
+					"match": "\\b(else|for|cast|type|and|or|then|not)\\b"
+				},
+				{
+					"name": "keyword.type.ebrew",
+					"match": "\\b((none|nat|byte)|(\\@*[A-Z][a-z]*))\\b"
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"name": "constant.language.ebrew",
+					"match": "\\b(none|true|false)\\b"
+				},
+				{
+					"name": "constant.numeric.ebrew",
+					"match": "\b([0-9]+)\b"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [{
+				"name": "comment.line.ebrew",
+				"match": "##.*\n"
+			}]
+		},
+		"opers": {
+			"patterns": [
+				{
+					"name": "keyword.operator.ebrew",
+					"match": "\b([\\+\\-\\*\\/\\%\\<\\>\\=\\!\\#]+)\b"
+				}
+			]
+		},
+		"chars": {
+			"patterns": [
+				{
+					"name": "string.quoted.escape.ebrew",
+					"match": "'..'?"
+				},
+				{
+					"name": "string.quoted.escape.ebrew",
+					"match": "'.'?"
+				}
+			]
+		},
+		"ents": {
+			"patterns": [
+				{
+					"name": "entity.name.function.ebrew",
+					"match": "\\b([a-z_][a-zA-Z0-9$@._]*)\\b *(?=\\()"
+				},
+				{
+					"name": "entity.name.ebrew",
+					"match": "\\b([a-z_][a-zA-Z0-9$@._]*)\\b(?!\\()"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.ebrew",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ebrew",
+					"match": "\\\\[^\n]"
+				}
+			]
+		}
+	},
+	"scopeName": "source.ebrew"
+}
