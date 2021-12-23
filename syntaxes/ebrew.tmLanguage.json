@@ -33,7 +33,7 @@
 				},
 				{
 					"name": "keyword.type.ebrew",
-					"match": "\\b((none|nat|byte)|(\\@*[A-Z][a-z]*))\\b"
+					"match": "\\b((none|nat|byte)|(\\@*[A-Z][A-Za-z_]*)|\\@+[a-z_]+)\\b"
 				}
 			]
 		},
