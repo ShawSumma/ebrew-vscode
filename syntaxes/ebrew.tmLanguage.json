@@ -29,7 +29,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.ebrew",
-					"match": "\\b(else|for|cast|type|and|or|then|not|read|write|exit|brk|some|is|as)\\b"
+					"match": "\\b(else|for|cast|type|and|or|then|not|read|write|exit|brk|some|is|as|the)\\b"
 				},
 				{
 					"name": "keyword.type.ebrew",
