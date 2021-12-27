@@ -3,7 +3,7 @@
     "publisher": "4984",
     "displayName": "ebrew-vscode",
     "description": "ebrew syntax for vscdoe",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.40.0"
     },
@@ -13,7 +13,7 @@
     "contributes": {
         "languages": [{
             "id": "ebrew",
-            "aliases": ["eb"],
+            "aliases": ["eb", "ebrew"],
             "extensions": [".eb", ".eh"],
             "configuration": "./language-configuration.json"
         }],

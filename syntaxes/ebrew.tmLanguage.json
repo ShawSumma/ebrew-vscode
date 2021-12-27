@@ -9,6 +9,9 @@
 			"include": "#chars"
 		},
 		{
+			"include": "#constants"
+		},
+		{
 			"include": "#comments"
 		},
 		{
@@ -16,9 +19,6 @@
 		},
 		{
 			"include": "#ents"
-		},
-		{
-			"include": "#constants"
 		},
 		{
 			"include": "#strings"
@@ -29,37 +29,33 @@
 			"patterns": [
 				{
 					"name": "keyword.control.ebrew",
-					"match": "\\b(else|for|cast|type|and|or|then|not|read|write|exit|brk|some|is|as|the)\\b"
+					"match": "\\b(else|for|cast|type|and|or|then|not|is|as|the|__[a-zA-Z0-9_]*)\\b"
 				},
 				{
 					"name": "keyword.type.ebrew",
-					"match": "\\b((none|nat|byte)|(\\@*[A-Z][A-Za-z_]*)|\\@+[a-z_]+)\\b"
+					"match": "\\b((none|nat|byte)|(\\@*[A-Z][A-Za-z0-9_]*)|\\@+[a-z_]+)\\b"
 				}
 			]
 		},
 		"constants": {
 			"patterns": [
 				{
-					"name": "constant.language.ebrew",
-					"match": "\\b(none|true|false)\\b"
-				},
-				{
 					"name": "constant.numeric.ebrew",
-					"match": "\b([0-9]+)\b"
+					"match": "\b[0-9]+\b"
 				}
 			]
 		},
 		"comments": {
 			"patterns": [{
 				"name": "comment.line.ebrew",
-				"match": "##.*\n"
+				"match": "/\\*.*\\*/"
 			}]
 		},
 		"opers": {
 			"patterns": [
 				{
 					"name": "keyword.operator.ebrew",
-					"match": "\b([\\+\\-\\*\\/\\%\\<\\>\\=\\!\\#]+)\b"
+					"match": "\b([\\+\\-\\*\\/\\%\\<\\>\\=\\!\\#\\)\\(]+)\b"
 				}
 			]
 		},
@@ -79,11 +75,11 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.ebrew",
-					"match": "\\b([a-z_][a-zA-Z0-9$@._]*)\\b *(?=\\()"
+					"match": "\\b([a-z_][a-zA-Z0-9$._]*)\\b *(?=\\()"
 				},
 				{
 					"name": "entity.name.ebrew",
-					"match": "\\b([a-z_][a-zA-Z0-9$@._]*)\\b(?!\\()"
+					"match": "\\b([a-z_][a-zA-Z0-9$._]*)\\b(?!\\()"
 				}
 			]
 		},
