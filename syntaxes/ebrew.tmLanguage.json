@@ -75,7 +75,7 @@
 			"patterns": [
 				{
 					"name": "entity.name.function.ebrew",
-					"match": "\\b([a-z_][a-zA-Z0-9$._]*)\\b *(?=\\()"
+					"match": "\\b([a-z_][a-zA-Z0-9$._]*)\\b\\s*(?=\\()"
 				},
 				{
 					"name": "entity.name.ebrew",
