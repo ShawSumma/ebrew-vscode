@@ -1,7 +1,7 @@
 {
     "comments": {
         // symbol used for single line comment. Remove this entry if your language does not support line comments
-        "blockComment": ["#", "#"],
+        "blockComment": ["#", "#"]
     },
     // symbols used as brackets
     "brackets": [
@@ -20,7 +20,7 @@
     "folding": {
         "markers": {
             "start": "\\(",
-            "end": "\\)",
+            "end": "\\)"
         }
     }
 }

@@ -2,7 +2,7 @@
     "name": "ebrew-vscode",
     "publisher": "4984",
     "displayName": "ebrew-vscode",
-    "description": "ebrew syntax for vscdoe",
+    "description": "ebrew syntax for vscode",
     "version": "0.0.6",
     "engines": {
         "vscode": "^1.40.0"
