@@ -34,6 +34,10 @@ const walkHover = (node, needle, types = {}) => {
                 next[arg.args[0].repr] = arg;
             }
         }
+        if (node.form === 'let') {
+            next = { ...next };
+            next[node.args[0].repr] = new Form('tvalue', node.args[0]);
+        }
         for (let arg of node.args) {
             const walked = walkHover(arg, needle, next);
             if (walked != null) {
@@ -53,7 +57,7 @@ const walkHover = (node, needle, types = {}) => {
 
 const activate = () => {
     vscode.languages.registerHoverProvider('ebrew', {
-        provideHover: (doc, pos, token) => {
+        provideHover: (doc, pos) => {
             let type = null;
             let xpos = null;
             try {
@@ -73,7 +77,7 @@ const activate = () => {
                     }
                     const all = walkHover(arg, pos, globals);
                     if (all != null) {
-                        const {restype, start, end } = all;
+                        const { restype, start, end } = all;
                         if (restype != null) {
                             type = typeRepr(restype);
                             xpos = new vscode.Range(start, end);
@@ -93,6 +97,26 @@ const activate = () => {
                 range: xpos,
             });
         },
+    });
+    vscode.languages.registerDocumentSymbolProvider('ebrew', {
+        provideDocumentSymbols: (doc) => {
+            const parser = new Parser(doc.getText());
+            parser.raise = (...args) => {
+                // throw new ParseError(parser.state.line, parser.state.col, args);
+                return new Ident('?');
+            };
+            const prog = parser.readDefs();
+            const ret = [];
+            for (const def of prog) {
+                if (def.start == null || def.end == null) {
+                    continue;
+                }
+                const range = new vscode.Range(toPos(def.start), toPos(def.end));
+                ret.push(new vscode.DocumentSymbol(def.args[0].repr, def.form, vscode.SymbolKind.Function, range, range));
+            }
+            // console.log(ret);
+            return ret;
+        }
     });
 };
 

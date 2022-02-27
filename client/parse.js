@@ -10,6 +10,40 @@ const Form = class {
                 this.args.push(key);
             }
         }
+        if (this.args.length !== 0) {
+            for (let i = 0; i < this.args.length; i++) {
+                if (this.args[i].start != null) {
+                    this.start = this.args[i].start;
+                    break;
+                }
+            }
+            for (let i = this.args.length - 1; i >= 0; i--) {
+                if (this.args[i].end != null) {
+                    this.end = this.args[i].end;
+                    break;
+                }
+            }
+        }
+        // if (this.start == null) {
+        //     if (this.end == null) {
+        //         this.start = {
+        //             line: 1,
+        //             col: 1,
+        //         };
+        //     } else {
+        //         this.start = this.end;
+        //     }
+        // }
+        // if (this.end == null) {
+        //     if (this.start == null) {
+        //         this.end = {
+        //             line: 1,
+        //             col: 1,
+        //         };
+        //     } else {
+        //         this.end = this.start;
+        //     }
+        // }
     }
 
     toString() {

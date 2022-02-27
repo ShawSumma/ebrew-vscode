@@ -22,9 +22,20 @@
 		},
 		{
 			"include": "#strings"
+		},
+		{
+			"include": "#identifier"
 		}
 	],
 	"repository": {
+		"identifier": {
+			"patterns": [
+				{
+					"name": "variable.name.ebrew",
+					"match": "[a-zA-Z\\-_][a-zA-Z0-9\\-_]*"
+				}
+			]
+		},
 		"keywords": {
 			"patterns": [
 				{
