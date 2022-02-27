@@ -24,26 +24,6 @@ const Form = class {
                 }
             }
         }
-        // if (this.start == null) {
-        //     if (this.end == null) {
-        //         this.start = {
-        //             line: 1,
-        //             col: 1,
-        //         };
-        //     } else {
-        //         this.start = this.end;
-        //     }
-        // }
-        // if (this.end == null) {
-        //     if (this.start == null) {
-        //         this.end = {
-        //             line: 1,
-        //             col: 1,
-        //         };
-        //     } else {
-        //         this.end = this.start;
-        //     }
-        // }
     }
 
     toString() {
@@ -336,7 +316,7 @@ const Parser = class {
                 type.func = true;
             }
         }
-        if (name.length === 0) {
+        if (name.repr.length === 0) {
             return this.raise('expected expression');
         }
         let res = null;
@@ -390,7 +370,7 @@ const Parser = class {
     readDef() {
         const fname = this.readName();
         if (fname.length === 0) {
-            return this.raise('toplevel: expected a function name');
+            this.raise('toplevel: expected a function name');
         }
         const vals = this.readArgArray();
         this.defs[0][fname.repr] = new Binding(fname, vals);
@@ -420,7 +400,11 @@ const Parser = class {
             if (this.state.done()) {
                 break;
             }
-            all.push(this.readDef());
+            const def = this.readDef();
+            if (def instanceof Ident && def.repr === '?') {
+                continue;
+            }
+            all.push(def);
         }
         return all;
     }

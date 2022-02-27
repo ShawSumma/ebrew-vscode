@@ -63,7 +63,6 @@ const activate = () => {
             try {
                 const parser = new Parser(doc.getText());
                 parser.raise = (...args) => {
-                    // throw new ParseError(parser.state.line, parser.state.col, args);
                     return new Ident('?');
                 };
                 const prog = parser.readDefs();
