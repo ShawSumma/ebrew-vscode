@@ -4,6 +4,7 @@
     "displayName": "ebrew-vscode",
     "description": "ebrew syntax for vscode",
     "version": "0.0.6",
+    "main": "client/ebrew.js",
     "engines": {
         "vscode": "^1.40.0"
     },
@@ -22,5 +23,8 @@
             "scopeName": "source.ebrew",
             "path": "./syntaxes/ebrew.tmLanguage.json"
         }]
-    }
+    },
+    "activationEvents": [
+        "onLanguage:ebrew"
+    ]
 }
