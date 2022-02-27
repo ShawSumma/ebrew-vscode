@@ -55,7 +55,7 @@ const walkHover = (node, needle, types = {}) => {
     return null;
 };
 
-const walkLocal = (node, cb, types={}, func=false) => {
+const walkLocal = (node, cb, types = {}, func = false) => {
     if (node instanceof Form) {
         let next = types;
         if (node.form === 'func') {
@@ -69,7 +69,7 @@ const walkLocal = (node, cb, types={}, func=false) => {
             next = { ...next };
             next[node.args[0].repr] = new Form('tvalue', node.args[0]);
         }
-        if (node.form === 'call') {
+        if (node.form === 'call' || node.form === 'tfunc' || node.form === 'textern' || node.form === 'func') {
             walkLocal(node.args[0], cb, next, true);
             for (let arg of node.args.slice(1)) {
                 walkLocal(arg, cb, next, false);
@@ -92,6 +92,9 @@ const activate = () => {
             try {
                 const parser = new Parser(doc.getText());
                 parser.raise = (...args) => {
+                    while (!parser.state.done() && parser.state.first() != '\n') {
+                        parser.state.skip();
+                    }
                     return new Ident('?');
                 };
                 const prog = parser.readDefs();
@@ -130,6 +133,9 @@ const activate = () => {
         provideDocumentSymbols: (doc) => {
             const parser = new Parser(doc.getText());
             parser.raise = (...args) => {
+                while (!parser.state.done() && parser.state.first() != '\n') {
+                    parser.state.skip();
+                }
                 return new Ident('?');
             };
             const prog = parser.readDefs();
@@ -151,6 +157,9 @@ const activate = () => {
         const builder = new vscode.SemanticTokensBuilder(legend);
         const parser = new Parser(doc.getText());
         parser.raise = (...args) => {
+            while (!parser.state.done() && parser.state.first() != '\n') {
+                parser.state.skip();
+            }
             return new Ident('?');
         };
         const prog = parser.readDefs();
@@ -161,16 +170,18 @@ const activate = () => {
             }
             if (def.form === 'extern') {
                 globals[def.args[0].repr] = new Form('textern', def.args[0], def.args.slice(1));
-                continue;
             }
             walkLocal(def, (type, ident) => {
                 if (ident.start == null || ident.end == null) {
                     return null;
                 }
+                if (['and', 'or', 'do', 'if', 'addr', 'for'].indexOf(ident.repr) !== -1) {
+                    return null;
+                }
                 if (type) {
-                    builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'variable', []);
-                } else {
                     builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'function', []);
+                } else {
+                    builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'variable', []);
                 }
             }, globals);
         }

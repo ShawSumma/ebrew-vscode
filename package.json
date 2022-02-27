@@ -3,7 +3,7 @@
     "publisher": "4984",
     "displayName": "ebrew-vscode",
     "description": "ebrew syntax for vscode",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "client/ebrew.js",
     "engines": {
         "vscode": "^1.40.0"

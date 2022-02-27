@@ -43,11 +43,11 @@ const Ident = class {
 
 const Value = class {
     constructor(value) {
-        this.value = value;
+        this.repr = value;
     }
 
     toString() {
-        return `[${this.value}]`;
+        return `[${this.repr}]`;
     }
 };
 
@@ -209,6 +209,7 @@ const Parser = class {
                 args.push(new Binding(name));
             }
         }
+        this.skipSpace();
         return args;
     }
 
@@ -243,8 +244,11 @@ const Parser = class {
             }
             while (this.state.first() !== '\"') {
                 const chr = this.state.read();
-                if (chr === '\\') {
-                    switch (chr) {
+                if (chr === '\n') {
+                    return this.raise("unexpected newline in string");
+                } else if (chr === '\\') {
+                    const esc = this.state.read();
+                    switch (esc) {
                         case '\'':
                         case '\"':
                         case '\\':
@@ -260,13 +264,13 @@ const Parser = class {
                             value.push('\r');
                             break;
                         default:
-                            return this.raise(`unknown escape sequence: \\${chr}`);
+                            this.raise(`unknown escape sequence: \\${esc}`);
                     }
                 } else {
                     value.push(chr);
                 }
                 if (this.state.done()) {
-                    return this.raise("unterminated string literal");
+                    this.raise("unterminated string literal");
                 }
             }
             this.state.skip();
@@ -313,6 +317,7 @@ const Parser = class {
         if (startOpenParen) {
             this.skipSpace();
             if (!this.state.done() && this.state.first() === ')') {
+                this.state.skip();
                 type.func = true;
             }
         }
@@ -351,7 +356,9 @@ const Parser = class {
                 res = new Form(name.repr, id, value, inscope);
                 break;
             default:
-                if (type.func || name instanceof Value) {
+                if (/[0-9]+/.test(name.repr)) {
+                    res = new Value(Number(name.repr));
+                } else if (type.func || name instanceof Value) {
                     res = name;
                 } else {
                     res = this.readCall(name);
@@ -369,8 +376,8 @@ const Parser = class {
 
     readDef() {
         const fname = this.readName();
-        if (fname.length === 0) {
-            this.raise('toplevel: expected a function name');
+        if (fname.repr.length === 0) {
+            return this.raise('toplevel: expected a function name');
         }
         const vals = this.readArgArray();
         this.defs[0][fname.repr] = new Binding(fname, vals);

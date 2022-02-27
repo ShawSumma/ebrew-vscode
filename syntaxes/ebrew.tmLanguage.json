@@ -22,6 +22,9 @@
 		},
 		{
 			"include": "#strings"
+		},
+		{
+			"include": "#identifier"
 		}
 	],
 	"repository": {
