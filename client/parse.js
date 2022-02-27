@@ -346,9 +346,9 @@ const Parser = class {
                 const value = this.readExprMatch(new Binding(null));
                 const id = this.readName();
                 this.defs.push({});
-                this.defs[this.defs.length - 1][id.repr] = new Binding(id.repr);
                 let inscope = null;
                 try {
+                    this.defs[this.defs.length - 1][id.repr] = new Binding(id.repr);
                     inscope = this.readExprMatch(type);
                 } finally {
                     this.defs.pop();
@@ -356,7 +356,7 @@ const Parser = class {
                 res = new Form(name.repr, id, value, inscope);
                 break;
             default:
-                if (/[0-9]+/.test(name.repr)) {
+                if (/^[0-9]+$/.test(name.repr)) {
                     res = new Value(Number(name.repr));
                 } else if (type.func || name instanceof Value) {
                     res = name;

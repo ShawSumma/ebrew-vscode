@@ -92,7 +92,7 @@ const activate = () => {
             try {
                 const parser = new Parser(doc.getText());
                 parser.raise = (...args) => {
-                    while (!parser.state.done() && parser.state.first() != '\n') {
+                    while (!parser.state.done() && parser.state.first() !== '\n') {
                         parser.state.skip();
                     }
                     return new Ident('?');
@@ -133,7 +133,7 @@ const activate = () => {
         provideDocumentSymbols: (doc) => {
             const parser = new Parser(doc.getText());
             parser.raise = (...args) => {
-                while (!parser.state.done() && parser.state.first() != '\n') {
+                while (!parser.state.done() && parser.state.first() !== '\n') {
                     parser.state.skip();
                 }
                 return new Ident('?');
@@ -157,7 +157,7 @@ const activate = () => {
         const builder = new vscode.SemanticTokensBuilder(legend);
         const parser = new Parser(doc.getText());
         parser.raise = (...args) => {
-            while (!parser.state.done() && parser.state.first() != '\n') {
+            while (!parser.state.done() && parser.state.first() !== '\n') {
                 parser.state.skip();
             }
             return new Ident('?');
