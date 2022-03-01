@@ -252,7 +252,7 @@ const Parser = class {
                         case '\'':
                         case '\"':
                         case '\\':
-                            value.push('\\');
+                            value.push(esc);
                             break;
                         case 'n':
                             value.push('\n');
@@ -285,7 +285,7 @@ const Parser = class {
                     case '\'':
                     case '\"':
                     case '\\':
-                        chr = '\\';
+                        chr = esc;
                         break;
                     case 'n':
                         chr = '\n';
@@ -343,8 +343,8 @@ const Parser = class {
                 break;
             case 'for':
             case 'let':
-                const value = this.readExprMatch(new Binding(null));
                 const id = this.readName();
+                const value = this.readExprMatch(new Binding(null));
                 this.defs.push({});
                 let inscope = null;
                 try {

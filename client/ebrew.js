@@ -69,7 +69,7 @@ const walkLocal = (node, cb, types = {}, func = false) => {
             next = { ...next };
             next[node.args[0].repr] = new Form('tvalue', node.args[0]);
         }
-        if (node.form === 'call' || node.form === 'tfunc' || node.form === 'textern' || node.form === 'func') {
+        if (node.form === 'call' || node.form === 'tfunc' || node.form === 'textern' || node.form === 'func' || node.form === 'extern') {
             walkLocal(node.args[0], cb, next, true);
             for (let arg of node.args.slice(1)) {
                 walkLocal(arg, cb, next, false);
