@@ -196,16 +196,17 @@ const Parser = class {
             if (this.state.done()) {
                 this.raise("toplevel: file ended when reading function definition arguments");
                 return [];
-            }
-            if (this.state.first() === ')') {
+            } else if (this.state.first() === ')') {
                 this.state.skip();
                 break;
-            }
-            const name = this.readName();
-            this.skipSpace();
-            if (this.state.first() === '(') {
-                args.push(new Binding(name, this.readArgArray()));
+            } else if (this.state.first() === '(') {
+                const subargs = this.readArgArray();
+                if (subargs.length === 0) {
+                    this.raise('arglist: empty parens found in definition arguments');
+                }
+                args.push(new Binding(subargs[0].name, subargs.slice(1)));
             } else {
+                const name = this.readName();
                 args.push(new Binding(name));
             }
         }
@@ -326,9 +327,6 @@ const Parser = class {
         }
         let res = null;
         switch (name.repr) {
-            case 'addr':
-                res = new Form('addr', this.readExprMatch(new Binding(null)));
-                break;
             case 'or':
                 res = new Form('or', this.readExprMatch(type), this.readExprMatch(type));
                 break;
@@ -375,11 +373,11 @@ const Parser = class {
     }
 
     readDef() {
-        const fname = this.readName();
-        if (fname.repr.length === 0) {
-            return this.raise('toplevel: expected a function name');
-        }
         const vals = this.readArgArray();
+        if (vals.length === 0) {
+            return this.raise('toplevel: empty definiton');
+        }
+        const fname = vals.shift().name;
         this.defs[0][fname.repr] = new Binding(fname, vals);
         this.defs.push({});
         try {
