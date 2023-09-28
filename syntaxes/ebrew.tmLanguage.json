@@ -3,9 +3,6 @@
 	"name": "ebrew",
 	"patterns": [
 		{
-			"include": "#keywords"
-		},
-		{
 			"include": "#chars"
 		},
 		{
@@ -15,35 +12,10 @@
 			"include": "#comments"
 		},
 		{
-			"include": "#opers"
-		},
-		{
-			"include": "#ents"
-		},
-		{
 			"include": "#strings"
-		},
-		{
-			"include": "#identifier"
 		}
 	],
 	"repository": {
-		"identifier": {
-			"patterns": [
-				{
-					"name": "variable.name.ebrew",
-					"match": "[a-zA-Z\\-_][a-zA-Z0-9\\-_]*"
-				}
-			]
-		},
-		"keywords": {
-			"patterns": [
-				{
-					"name": "keyword.control.ebrew",
-					"match": "\\b(let|for|and|or|do|addr|if)\\b"
-				}
-			]
-		},
 		"constants": {
 			"patterns": [
 				{

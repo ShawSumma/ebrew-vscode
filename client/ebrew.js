@@ -12,12 +12,12 @@ const within = (low, find, high) => {
 };
 
 const typeRepr = (type) => {
-    if (type.form === 'tvalue') {
+    if (type.form === 'type.value') {
         return type.args[0].repr;
-    } else if (type.form === 'tfunc') {
-        return `${type.args[0].repr} (${type.args.slice(1).map(arg => typeRepr(arg)).join(' ')})`;
-    } else if (type.form === 'textern') {
-        return `${type.args[0].repr} (${type.args.slice(1).map(arg => typeRepr(arg)).join(' ')}) ?`;
+    } else if (type.form === 'type.func') {
+        return `(${type.args[0].repr} ${type.args.slice(1).map(arg => typeRepr(arg)).join(' ')})`;
+    } else if (type.form === 'type.extern') {
+        return `(${type.args[0].repr} ${type.args.slice(1).map(arg => typeRepr(arg)).join(' ')}) ?`;
     }
 };
 
@@ -34,9 +34,11 @@ const walkHover = (node, needle, types = {}) => {
                 next[arg.args[0].repr] = arg;
             }
         }
-        if (node.form === 'let') {
+        if (node.form === 'lambda') {
             next = { ...next };
-            next[node.args[0].repr] = new Form('tvalue', node.args[0]);
+            for (const arg of node.args.slice(0, -1)) {
+                next[arg.repr] = arg;
+            }
         }
         for (let arg of node.args) {
             const walked = walkHover(arg, needle, next);
@@ -55,7 +57,7 @@ const walkHover = (node, needle, types = {}) => {
     return null;
 };
 
-const walkLocal = (node, cb, types = {}, func = false) => {
+const walkLocal = (node, cb, types = {}, type='arg') => {
     if (node instanceof Form) {
         let next = types;
         if (node.form === 'func') {
@@ -65,59 +67,75 @@ const walkLocal = (node, cb, types = {}, func = false) => {
                 next[arg.args[0].repr] = arg;
             }
         }
-        if (node.form === 'let') {
+        if (node.form === 'lambda') {
             next = { ...next };
-            next[node.args[0].repr] = new Form('tvalue', node.args[0]);
+            for (const arg of node.args.slice(0, -1)) {
+                next[arg.repr] = arg;
+            }
         }
-        if (node.form === 'call' || node.form === 'tfunc' || node.form === 'textern' || node.form === 'func' || node.form === 'extern') {
-            walkLocal(node.args[0], cb, next, true);
+        if (node.form === 'generic.args') {
+        } else if (node.form === 'generic') {
+            walkLocal(node.args[0], cb, next, 'generic');
+            walkLocal(node.args[1], cb, next, 'arg');
+        } else if (node.form === 'type.func' && type === 'generic') {
+            walkLocal(node.args[0], cb, next, 'lambda');
             for (let arg of node.args.slice(1)) {
-                walkLocal(arg, cb, next, false);
+                walkLocal(arg, cb, next, 'arg');
+            }
+        } else if (node.form === 'type.func' || node.form === 'call' || node.form === 'func' || node.form === 'extern') {
+            walkLocal(node.args[0], cb, next, 'func');
+            for (let arg of node.args.slice(1)) {
+                walkLocal(arg, cb, next, 'arg');
             }
         } else {
             for (let arg of node.args) {
-                walkLocal(arg, cb, next, false);
+                walkLocal(arg, cb, next, 'arg');
             }
-        }
+        }type
     } else if (node instanceof Ident) {
-        cb(func, node);
+        cb(type, node);
     }
 };
 
-const activate = () => {
+const updateErrors = (errors) => {
+    const diag = [];
+    for (const err of errors) {
+        const range = new vscode.Range(err.start.line-1, err.start.col-1, err.stop.line-1, err.stop.col-1);
+        diag.push(new vscode.Diagnostic(range, err.msg));
+    }
+    return diag;
+}
+
+const activate = (context) => {
+    const ebrewParserDiag = vscode.languages.createDiagnosticCollection('ebrew.parser');
+
+    context.subscriptions.push(ebrewParserDiag);
+
+    vscode.workspace.onDidChangeTextDocument();
+
     vscode.languages.registerHoverProvider('ebrew', {
         provideHover: (doc, pos) => {
             let type = null;
             let xpos = null;
-            try {
-                const parser = new Parser(doc.getText());
-                parser.raise = (...args) => {
-                    while (!parser.state.done() && parser.state.first() !== '\n') {
-                        parser.state.skip();
-                    }
-                    return new Ident('?');
-                };
-                const prog = parser.readDefs();
-                const globals = {};
-                for (let arg of prog) {
-                    if (arg.form === 'func') {
-                        globals[arg.args[0].repr] = new Form('tfunc', arg.args[0], arg.args.slice(1, -1));
-                    }
-                    if (arg.form === 'extern') {
-                        globals[arg.args[0].repr] = new Form('textern', arg.args[0], arg.args.slice(1));
-                    }
-                    const all = walkHover(arg, pos, globals);
-                    if (all != null) {
-                        const { restype, start, end } = all;
-                        if (restype != null) {
-                            type = typeRepr(restype);
-                            xpos = new vscode.Range(start, end);
-                        }
-                        break;
-                    }
+            const parser = new Parser(doc.getText());
+            const prog = parser.readDefs();
+            const globals = {};
+            for (let arg of prog) {
+                if (arg.form === 'func') {
+                    globals[arg.args[0].repr] = new Form('type.func', arg.args[0], arg.args.slice(1, -1));
                 }
-            } catch (e) {
-                console.log(e.stack);
+                if (arg.form === 'extern') {
+                    globals[arg.args[0].repr] = new Form('type.extern', arg.args[0], arg.args.slice(1));
+                }
+                const all = walkHover(arg, pos, globals);
+                if (all != null) {
+                    const { restype, start, end } = all;
+                    if (restype != null) {
+                        type = typeRepr(restype);
+                        xpos = new vscode.Range(start, end);
+                    }
+                    break;
+                }
             }
             if (type == null) {
                 return null;
@@ -132,12 +150,6 @@ const activate = () => {
     vscode.languages.registerDocumentSymbolProvider('ebrew', {
         provideDocumentSymbols: (doc) => {
             const parser = new Parser(doc.getText());
-            parser.raise = (...args) => {
-                while (!parser.state.done() && parser.state.first() !== '\n') {
-                    parser.state.skip();
-                }
-                return new Ident('?');
-            };
             const prog = parser.readDefs();
             const ret = [];
             for (const def of prog) {
@@ -156,31 +168,23 @@ const activate = () => {
     const provideDocumentSemanticTokens = (doc) => {
         const builder = new vscode.SemanticTokensBuilder(legend);
         const parser = new Parser(doc.getText());
-        parser.raise = (...args) => {
-            while (!parser.state.done() && parser.state.first() !== '\n') {
-                parser.state.skip();
-            }
-            return new Ident('?');
-        };
         const prog = parser.readDefs();
+        ebrewParserDiag.set(doc.uri, updateErrors(parser.errors));
         const globals = {};
         for (const def of prog) {
             if (def.form === 'func') {
-                globals[def.args[0].repr] = new Form('tfunc', def.args[0], def.args.slice(1, -1));
+                globals[def.args[0].repr] = new Form('type.func', def.args[0], def.args.slice(1, -1));
             }
             if (def.form === 'extern') {
-                globals[def.args[0].repr] = new Form('textern', def.args[0], def.args.slice(1));
+                globals[def.args[0].repr] = new Form('type.extern', def.args[0], def.args.slice(1));
             }
             walkLocal(def, (type, ident) => {
                 if (ident.start == null || ident.end == null) {
                     return null;
                 }
-                if (['and', 'or', 'do', 'if', 'addr', 'for'].indexOf(ident.repr) !== -1) {
-                    return null;
-                }
-                if (type) {
+                if (type === 'func') {
                     builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'function', []);
-                } else {
+                } else if (type === 'arg') {
                     builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'variable', []);
                 }
             }, globals);
