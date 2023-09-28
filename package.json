@@ -3,7 +3,7 @@
     "publisher": "4984",
     "displayName": "beta-ebrew-vscode",
     "description": "beta ebrew syntax for vscode",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "repository": {
         "type": "git",
         "directory": ".",

@@ -57,41 +57,20 @@ const walkHover = (node, needle, types = {}) => {
     return null;
 };
 
-const walkLocal = (node, cb, types = {}, type='arg') => {
+const walkLocal = (node, cb, type='arg') => {
     if (node instanceof Form) {
-        let next = types;
-        if (node.form === 'func') {
-            next = { ...next };
-            for (let i = 1; i < node.args.length - 1; i++) {
-                const arg = node.args[i];
-                next[arg.args[0].repr] = arg;
-            }
-        }
-        if (node.form === 'lambda') {
-            next = { ...next };
-            for (const arg of node.args.slice(0, -1)) {
-                next[arg.repr] = arg;
-            }
-        }
         if (node.form === 'generic.args') {
         } else if (node.form === 'generic') {
-            walkLocal(node.args[0], cb, next, 'generic');
-            walkLocal(node.args[1], cb, next, 'arg');
-        } else if (node.form === 'type.func' && type === 'generic') {
-            walkLocal(node.args[0], cb, next, 'lambda');
-            for (let arg of node.args.slice(1)) {
-                walkLocal(arg, cb, next, 'arg');
-            }
-        } else if (node.form === 'type.func' || node.form === 'call' || node.form === 'func' || node.form === 'extern') {
-            walkLocal(node.args[0], cb, next, 'func');
-            for (let arg of node.args.slice(1)) {
-                walkLocal(arg, cb, next, 'arg');
-            }
+            walkLocal(node.args[0], cb, 'generic');
+            walkLocal(node.args[1], cb, 'arg');
+        } else if (node.form === 'call' || node.form === 'func' || node.form === 'extern') {
+            walkLocal(node.args[0], cb, 'func');
+            walkLocal(node.args[node.args.length-1], cb, 'arg');
         } else {
             for (let arg of node.args) {
-                walkLocal(arg, cb, next, 'arg');
+                walkLocal(arg, cb, 'expr');
             }
-        }type
+        }
     } else if (node instanceof Ident) {
         cb(type, node);
     }
