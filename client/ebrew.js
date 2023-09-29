@@ -58,17 +58,17 @@ const walkHover = (node, needle, types = {}) => {
 };
 
 const walkLocal = (node, cb, type='arg') => {
+    console.log(node);
     if (node instanceof Form) {
-        if (node.form === 'generic.args') {
-        } else if (node.form === 'generic') {
-            walkLocal(node.args[0], cb, 'generic');
-            walkLocal(node.args[1], cb, 'arg');
-        } else if (node.form === 'call' || node.form === 'func' || node.form === 'extern') {
+        if (node.form === 'call' || node.form === 'func' || node.form === 'extern') {
             walkLocal(node.args[0], cb, 'func');
-            walkLocal(node.args[node.args.length-1], cb, 'arg');
+            for (let arg of node.args.slice(1)) {
+                walkLocal(arg, cb, 'arg');
+            }
         } else {
+            console.log(node.form);
             for (let arg of node.args) {
-                walkLocal(arg, cb, 'expr');
+                walkLocal(arg, cb, 'arg');
             }
         }
     } else if (node instanceof Ident) {
@@ -149,14 +149,8 @@ const activate = (context) => {
         const parser = new Parser(doc.getText());
         const prog = parser.readDefs();
         ebrewParserDiag.set(doc.uri, updateErrors(parser.errors));
-        const globals = {};
         for (const def of prog) {
-            if (def.form === 'func') {
-                globals[def.args[0].repr] = new Form('type.func', def.args[0], def.args.slice(1, -1));
-            }
-            if (def.form === 'extern') {
-                globals[def.args[0].repr] = new Form('type.extern', def.args[0], def.args.slice(1));
-            }
+            console.log(def.start);
             walkLocal(def, (type, ident) => {
                 if (ident.start == null || ident.end == null) {
                     return null;
@@ -166,7 +160,7 @@ const activate = (context) => {
                 } else if (type === 'arg') {
                     builder.push(new vscode.Range(toPos(ident.start), toPos(ident.end)), 'variable', []);
                 }
-            }, globals);
+            });
         }
         return builder.build();
     };

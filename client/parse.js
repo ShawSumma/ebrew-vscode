@@ -262,7 +262,6 @@ const Parser = class {
             if (scope[name.repr] != null) {
                 const binding = scope[name.repr];
                 if (binding.func) {
-                    const argValues = [name];
                     const curDefs = {};
                     const curGenerics = {};
                     this.defs.push(curDefs);
@@ -287,7 +286,7 @@ const Parser = class {
                             curDefs[arg.name.repr] = arg;
                             return this.readExprMatch(arg);
                         });
-                        return new Form('generic', new Form('generic.args', ga), new Form('call', argValues));
+                        return new Form('generic', new Form('generic.args', ga), new Form('call', name, ...args));
                     } finally {
                         this.defs.pop();
                         this.generics.shift();
